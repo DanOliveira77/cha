@@ -379,7 +379,7 @@
       }
       .form-row {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 16px;
         margin-bottom: 16px;
       }
@@ -807,11 +807,11 @@
         .menu-toggle {
           display: block;
         }
-        .form-row {
-          grid-template-columns: 1fr;
-        }
         .gifts-grid {
           grid-template-columns: 1fr 1fr;
+        }
+        .rsvp-card {
+          padding: 28px 22px;
         }
         .hero-text h2 {
           font-size: 28px;
@@ -895,7 +895,7 @@
         <div class="container">
           <div class="invite">
             <div class="invite-left">
-              <p class="eyebrow">Você é nosso convidado para o</p>
+              <p class="eyebrow">Você é nosso convidado para&nbsp;o</p>
               <h3 style="text-align: center">Chá de Casa Nova</h3>
               <p style="text-align: center">Um novo lar, novas histórias e muitos sonhos para realizar!</p>
               <span class="heart" style="text-align: center">♡</span>
@@ -1157,7 +1157,7 @@
           "Antes de formar-te no ventre, eu te conheci; antes que saísses da
           madre, eu te santifiquei."<cite>Jeremias 1:5</cite>
         </p>
-        <div class="divider"></div>
+        <div class="divider on-cream-2"></div>
         <p class="blessing">Deus abençoe cada um de vocês! ♡</p>
       </div>
     </footer>
