@@ -985,6 +985,8 @@
                   type="tel"
                   id="telefone"
                   required
+                  pattern="\(\d{2}\)\s?\d{4,5}-\d{4}"
+                  title="Use o formato (00) 00000-0000"
                   placeholder="(00) 00000-0000"
                 />
               </div>
@@ -1191,6 +1193,8 @@
             <input
               type="tel"
               id="presenteTelefone"
+              pattern="\(\d{2}\)\s?\d{4,5}-\d{4}"
+              title="Use o formato (00) 00000-0000"
               placeholder="(00) 00000-0000"
             />
           </div>
@@ -1204,6 +1208,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
       (function () {
+        // Validação de telefone no formato (00) 00000-0000 ou (00) 0000-0000
+        const TELEFONE_REGEX = /^\(\d{2}\)\s?\d{4,5}-\d{4}$/;
+
         // Supabase
         const SUPABASE_URL = "https://lxtryaaqahpmeznimfgf.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_cckol6qJIP_9xWUc_VP6lw_Xqfbpf6x";
@@ -1455,6 +1462,11 @@
               }
               if (!telefone) {
                 presenteTelefone.focus();
+                return;
+              }
+              if (!TELEFONE_REGEX.test(telefone)) {
+                presenteTelefone.focus();
+                presenteTelefone.reportValidity();
                 return;
               }
 
