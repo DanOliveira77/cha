@@ -78,7 +78,7 @@
         margin: 0 auto 40px;
       }
       .divider {
-        width: 60px;
+        width: 80px;
         height: 1px;
         background: var(--beige-2);
         margin: 16px auto;
@@ -92,7 +92,12 @@
         transform: translate(-50%, -50%);
         color: var(--beige-2);
         font-size: 13px;
-        padding: 0 8px;
+        padding: 0 16px;
+        background: var(--cream);
+      }
+      #presentes .divider::after,
+      footer .divider::after {
+        background: var(--cream-2);
       }
 
       /* Header / nav */
