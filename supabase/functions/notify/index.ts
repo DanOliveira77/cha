@@ -8,14 +8,14 @@
 //   RESEND_API_KEY     -- chave da API da Resend
 //   NOTIFY_EMAIL_TO    -- e-mail do organizador que vai receber os avisos
 //   NOTIFY_EMAIL_FROM  -- remetente verificado na Resend (ex. avisos@seudominio.com)
-//   SUPABASE_URL       -- URL do projeto Supabase
-//   SUPABASE_ANON_KEY  -- chave pública do projeto (presentes tem SELECT público)
+//   APP_URL       -- URL do projeto Supabase
+//   APP_ANON_KEY  -- chave pública do projeto (presentes tem SELECT público)
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY")!;
 const NOTIFY_EMAIL_TO = Deno.env.get("NOTIFY_EMAIL_TO")!;
 const NOTIFY_EMAIL_FROM = Deno.env.get("NOTIFY_EMAIL_FROM")!;
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+const APP_URL = Deno.env.get("APP_URL")!;
+const APP_ANON_KEY = Deno.env.get("APP_ANON_KEY")!;
 
 interface WebhookPayload {
   type: "INSERT";
@@ -25,11 +25,11 @@ interface WebhookPayload {
 
 async function buscarNomePresente(presenteId: string): Promise<string> {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/presentes?id=eq.${presenteId}&select=nome`,
+    `${APP_URL}/rest/v1/presentes?id=eq.${presenteId}&select=nome`,
     {
       headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        apikey: APP_ANON_KEY,
+        Authorization: `Bearer ${APP_ANON_KEY}`,
       },
     },
   );
