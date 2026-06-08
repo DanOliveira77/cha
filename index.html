@@ -985,8 +985,6 @@
                   type="tel"
                   id="telefone"
                   required
-                  pattern="\(\d{2}\)\s?\d{4,5}-\d{4}"
-                  title="Use o formato (00) 00000-0000"
                   placeholder="(00) 00000-0000"
                 />
               </div>
@@ -1193,8 +1191,6 @@
             <input
               type="tel"
               id="presenteTelefone"
-              pattern="\(\d{2}\)\s?\d{4,5}-\d{4}"
-              title="Use o formato (00) 00000-0000"
               placeholder="(00) 00000-0000"
             />
           </div>
@@ -1208,8 +1204,33 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
       (function () {
-        // Validação de telefone no formato (00) 00000-0000 ou (00) 0000-0000
-        const TELEFONE_REGEX = /^\(\d{2}\)\s?\d{4,5}-\d{4}$/;
+        // Máscara e validação de telefone
+        // Aplica (DD) XXXXX-XXXX (celular) ou (DD) XXXX-XXXX (fixo) automaticamente
+        const TELEFONE_REGEX = /^\(\d{2}\)\s\d{4,5}-\d{4}$/;
+
+        function formatarTelefone(valor) {
+          const d = valor.replace(/\D/g, "").slice(0, 11);
+          if (d.length === 0) return "";
+          if (d.length <= 2) return `(${d}`;
+          if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+          if (d.length <= 10)
+            return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+          return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+        }
+
+        function aplicarMascaraTelefone(input) {
+          input.addEventListener("input", () => {
+            const pos = input.selectionStart;
+            const antes = input.value;
+            const novo = formatarTelefone(antes);
+            input.value = novo;
+            // mantém cursor em posição razoável
+            input.setSelectionRange(
+              Math.min(pos, novo.length),
+              Math.min(pos, novo.length),
+            );
+          });
+        }
 
         // Supabase
         const SUPABASE_URL = "https://lxtryaaqahpmeznimfgf.supabase.co";
@@ -1276,6 +1297,7 @@
         // RSVP form
         const rsvpForm = document.getElementById("rsvpForm");
         const formMsg = document.getElementById("formMsg");
+        aplicarMascaraTelefone(document.getElementById("telefone"));
         rsvpForm.addEventListener("submit", async function (e) {
           e.preventDefault();
           const { error } = await supabase.from("confirmacoes_presenca").insert({
@@ -1417,6 +1439,7 @@
         const modalForm = document.getElementById("modalForm");
         const presenteNome = document.getElementById("presenteNome");
         const presenteTelefone = document.getElementById("presenteTelefone");
+        aplicarMascaraTelefone(presenteTelefone);
 
         function handleGiftAction(action, id) {
           const gift = gifts.find((g) => g.id == id);
