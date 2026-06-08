@@ -1201,8 +1201,17 @@
       </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
       (function () {
+        // Supabase
+        const SUPABASE_URL = "https://SEU-PROJETO.supabase.co";
+        const SUPABASE_ANON_KEY = "SUA-ANON-KEY";
+        const supabase = window.supabase.createClient(
+          SUPABASE_URL,
+          SUPABASE_ANON_KEY,
+        );
+
         // Mobile menu
         const menuToggle = document.getElementById("menuToggle");
         const navLinks = document.getElementById("navLinks");
@@ -1260,160 +1269,60 @@
         // RSVP form
         const rsvpForm = document.getElementById("rsvpForm");
         const formMsg = document.getElementById("formMsg");
-        rsvpForm.addEventListener("submit", function (e) {
+        rsvpForm.addEventListener("submit", async function (e) {
           e.preventDefault();
+          const { error } = await supabase.from("confirmacoes_presenca").insert({
+            nome: document.getElementById("nome").value.trim(),
+            telefone: document.getElementById("telefone").value.trim(),
+            email: document.getElementById("email").value.trim(),
+            presenca: document.getElementById("presenca").value,
+            mensagem: document.getElementById("mensagem").value.trim() || null,
+          });
+
+          if (error) {
+            formMsg.textContent =
+              "Não foi possível confirmar agora. Tente novamente em instantes.";
+            formMsg.classList.add("show");
+            setTimeout(() => formMsg.classList.remove("show"), 6000);
+            return;
+          }
+
+          formMsg.textContent =
+            "Presença confirmada com carinho! Estamos animados para celebrar com você. ♡";
           formMsg.classList.add("show");
           rsvpForm.reset();
           setTimeout(() => formMsg.classList.remove("show"), 6000);
         });
 
-        // Gift list data
-        const gifts = [
-          {
-            id: 1,
-            name: "Liquidificador",
-            price: 189.9,
-            cat: "cozinha",
-            img: "https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=400&q=80",
-            reserved: false,
-            qty: 0,
-            max: 1,
-          },
-          {
-            id: 2,
-            name: "Air Fryer",
-            price: 459.9,
-            cat: "cozinha",
-            img: "https://images.unsplash.com/photo-1648145404453-d2f5b3e3e30b?w=400&q=80",
-            reserved: false,
-            qty: 0,
-            max: 1,
-          },
-          {
-            id: 3,
-            name: "Aparelho de Jantar",
-            price: 239.9,
-            cat: "cozinha",
-            img: "https://images.unsplash.com/photo-1603199506016-b9a594b593c0?w=400&q=80",
-            reserved: false,
-            qty: 0,
-            max: 1,
-          },
-          {
-            id: 4,
-            name: "Jogo de Cama Casal",
-            price: 159.9,
-            cat: "quarto",
-            img: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&q=80",
-            reserved: false,
-            qty: 0,
-            max: 1,
-          },
-          {
-            id: 5,
-            name: "Jogo de Panelas",
-            price: 699.9,
-            cat: "cozinha",
-            img: "https://images.unsplash.com/photo-1584990347163-0c065c97c1c7?w=400&q=80",
-            reserved: false,
-            qty: 0,
-            max: 1,
-          },
-          {
-            id: 6,
-            name: "Chaleira Elétrica",
-            price: 129.9,
-            cat: "cozinha",
-            img: "https://images.unsplash.com/photo-1594631252845-29fc4cc8866c?w=400&q=80",
-            reserved: false,
-            qty: 0,
-            max: 1,
-          },
-          {
-            id: 7,
-            name: "Manta para Sofá",
-            price: 89.9,
-            cat: "sala",
-            img: "https://images.unsplash.com/photo-1567016526105-22da7c13161a?w=400&q=80",
-            reserved: false,
-            qty: 0,
-            max: 1,
-          },
-          {
-            id: 8,
-            name: "Toalhas de Banho",
-            price: 119.9,
-            cat: "banheiro",
-            img: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&q=80",
-            reserved: false,
-            qty: 0,
-            max: 2,
-          },
-          {
-            id: 9,
-            name: "Cesto Organizador",
-            price: 79.9,
-            cat: "lavanderia",
-            img: "https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=400&q=80",
-            reserved: false,
-            qty: 0,
-            max: 2,
-          },
-          {
-            id: 10,
-            name: "Quadro Decorativo",
-            price: 99.9,
-            cat: "decoracao",
-            img: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400&q=80",
-            reserved: false,
-            qty: 0,
-            max: 1,
-          },
-          {
-            id: 11,
-            name: "Ajuda com o Condomínio",
-            price: 200,
-            cat: "outros",
-            icon: "🏢",
-            reserved: false,
-            qty: 0,
-            max: 1,
-            pixOnly: true,
-          },
-          {
-            id: 12,
-            name: "Conta de Luz",
-            price: 110,
-            cat: "outros",
-            icon: "💡",
-            reserved: false,
-            qty: 0,
-            max: 1,
-            pixOnly: true,
-          },
-          {
-            id: 13,
-            name: "Um Ano de Netflix",
-            price: 240,
-            cat: "outros",
-            icon: "🎬",
-            reserved: false,
-            qty: 0,
-            max: 1,
-            pixOnly: true,
-          },
-          {
-            id: 14,
-            name: "Ajuda no Mercado",
-            price: 500,
-            cat: "outros",
-            icon: "🛒",
-            reserved: false,
-            qty: 0,
-            max: 1,
-            pixOnly: true,
-          },
-        ];
+        // Gift list data — carregada do Supabase (tabela `presentes`)
+        let gifts = [];
+
+        async function loadGifts() {
+          const { data, error } = await supabase
+            .from("presentes")
+            .select(
+              "id, nome, preco, categoria, imagem_url, icone, quantidade_maxima, quantidade_reservada, apenas_pix",
+            );
+
+          if (error) {
+            console.error("Erro ao carregar presentes:", error);
+            gifts = [];
+            return;
+          }
+
+          gifts = data.map((p) => ({
+            id: p.id,
+            name: p.nome,
+            price: p.preco,
+            cat: p.categoria,
+            img: p.imagem_url,
+            icon: p.icone,
+            reserved: p.quantidade_reservada >= p.quantidade_maxima,
+            qty: p.quantidade_reservada,
+            max: p.quantidade_maxima,
+            pixOnly: p.apenas_pix,
+          }));
+        }
 
         const grid = document.getElementById("giftsGrid");
         const filters = document.getElementById("filters");
@@ -1489,7 +1398,7 @@
           renderGifts();
         });
 
-        renderGifts();
+        loadGifts().then(renderGifts);
 
         // Modal
         const overlay = document.getElementById("modalOverlay");
@@ -1537,22 +1446,45 @@
              pedimos que confirme abaixo. É rapidinho!`;
             modalForm.classList.add("show");
             modalAction.textContent = "Confirmar que vou presentear";
-            modalAction.onclick = () => {
-              if (!presenteNome.value.trim()) {
+            modalAction.onclick = async () => {
+              const nome = presenteNome.value.trim();
+              const telefone = presenteTelefone.value.trim();
+              if (!nome) {
                 presenteNome.focus();
                 return;
               }
-              if (!presenteTelefone.value.trim()) {
+              if (!telefone) {
                 presenteTelefone.focus();
                 return;
               }
-              gift.reserved = true;
-              gift.qty = gift.max;
+
+              modalAction.disabled = true;
+              const { error } = await supabase.from("reservas_presentes").insert({
+                presente_id: gift.id,
+                nome,
+                telefone,
+              });
+              modalAction.disabled = false;
+
+              if (error) {
+                await loadGifts();
+                renderGifts();
+                modalForm.classList.remove("show");
+                modalImg.style.display = "none";
+                modalTitle.textContent = "Ops!";
+                modalText.textContent =
+                  "Esse presente já foi escolhido por outra pessoa. Que tal escolher outro item da lista?";
+                modalAction.textContent = "Fechar";
+                modalAction.onclick = () => overlay.classList.remove("show");
+                return;
+              }
+
+              await loadGifts();
               renderGifts();
               modalForm.classList.remove("show");
               modalImg.style.display = "none";
               modalTitle.textContent = "Combinado! ♡";
-              modalText.textContent = `Muito obrigado, ${presenteNome.value.trim()}! Anotamos aqui que você vai presentear com "${gift.name}". Mal podemos esperar para celebrar com você.`;
+              modalText.textContent = `Muito obrigado, ${nome}! Anotamos aqui que você vai presentear com "${gift.name}". Mal podemos esperar para celebrar com você.`;
               modalAction.textContent = "Fechar";
               modalAction.onclick = () => overlay.classList.remove("show");
             };
