@@ -91,6 +91,21 @@ create trigger trg_incrementar_reserva_presente
   after insert on reservas_presentes
   for each row execute function incrementar_reserva_presente();
 
+create or replace function decrementar_reserva_presente()
+returns trigger as $$
+begin
+  update presentes
+  set quantidade_reservada = greatest(0, quantidade_reservada - 1)
+  where id = old.presente_id;
+
+  return old;
+end;
+$$ language plpgsql security definer;
+
+create trigger trg_decrementar_reserva_presente
+  after delete on reservas_presentes
+  for each row execute function decrementar_reserva_presente();
+
 -- =========================================================
 -- Row Level Security
 -- =========================================================
