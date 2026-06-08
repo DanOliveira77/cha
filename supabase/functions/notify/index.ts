@@ -8,10 +8,14 @@
 //   RESEND_API_KEY     -- chave da API da Resend
 //   NOTIFY_EMAIL_TO    -- e-mail do organizador que vai receber os avisos
 //   NOTIFY_EMAIL_FROM  -- remetente verificado na Resend (ex. avisos@seudominio.com)
+//   SUPABASE_URL       -- URL do projeto Supabase
+//   SUPABASE_ANON_KEY  -- chave pública do projeto (presentes tem SELECT público)
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY")!;
 const NOTIFY_EMAIL_TO = Deno.env.get("NOTIFY_EMAIL_TO")!;
 const NOTIFY_EMAIL_FROM = Deno.env.get("NOTIFY_EMAIL_FROM")!;
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 
 interface WebhookPayload {
   type: "INSERT";
@@ -19,7 +23,24 @@ interface WebhookPayload {
   record: Record<string, unknown>;
 }
 
-function montarEmail(payload: WebhookPayload): { subject: string; html: string } {
+async function buscarNomePresente(presenteId: string): Promise<string> {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/presentes?id=eq.${presenteId}&select=nome`,
+    {
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+    },
+  );
+  if (!res.ok) return presenteId;
+  const data = await res.json();
+  return data?.[0]?.nome ?? presenteId;
+}
+
+async function montarEmail(
+  payload: WebhookPayload,
+): Promise<{ subject: string; html: string }> {
   const { table, record } = payload;
 
   if (table === "confirmacoes_presenca") {
@@ -37,13 +58,15 @@ function montarEmail(payload: WebhookPayload): { subject: string; html: string }
     };
   }
 
+  const nomePresente = await buscarNomePresente(record.presente_id as string);
+
   return {
-    subject: `Novo presente reservado por ${record.nome}`,
+    subject: `Novo presente reservado: ${nomePresente}`,
     html: `
       <p><strong>${record.nome}</strong> confirmou que vai presentear.</p>
       <ul>
+        <li>Presente: <strong>${nomePresente}</strong></li>
         <li>Telefone: ${record.telefone}</li>
-        <li>ID do presente: ${record.presente_id}</li>
       </ul>
     `,
   };
@@ -55,7 +78,7 @@ Deno.serve(async (req) => {
   }
 
   const payload: WebhookPayload = await req.json();
-  const { subject, html } = montarEmail(payload);
+  const { subject, html } = await montarEmail(payload);
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
