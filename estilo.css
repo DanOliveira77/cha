@@ -183,7 +183,9 @@ header {
 .hero-photos {
   position: relative;
 }
-.hero-photos .main-photo {
+.hero-photos .main-photo img{
+  width: 600px;
+  height: 900px;
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow);
@@ -201,12 +203,12 @@ header {
 }
 .poly1 {
   bottom: -30px;
-  left: -30px;
+  left: 300px;
   transform: rotate(-8deg);
 }
 .poly2 {
   bottom: -50px;
-  left: 120px;
+  left: 440px;
   transform: rotate(6deg);
   width: 170px;
 }
